@@ -1,0 +1,15 @@
+{
+    "name": "al_rehab/rawatask",
+    "autoload": {
+        "psr-4": {
+            "AlRehab\\Rawatask\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "yousef2002307",
+            "email": "85695400+yousef2002307@users.noreply.github.com"
+        }
+    ],
+    "require": {}
+}
