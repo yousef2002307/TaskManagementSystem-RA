@@ -103,6 +103,7 @@ class TaskController
         $id = (int) ($_POST['id'] ?? 0);
         Task::delete($id, $this->userId);
 
+        $_SESSION['flash_success'] = 'Task deleted successfully.';
         $this->jsonResponse(true, 'Task deleted.');
     }
 

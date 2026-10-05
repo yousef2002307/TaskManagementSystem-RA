@@ -18,6 +18,7 @@ class Auth
     public static function login(array $user): void
     {
         session_regenerate_id(true);
+        CSRF::generate();
         $_SESSION['user'] = [
             'id'    => $user['id'],
             'name'  => $user['name'],

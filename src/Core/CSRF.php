@@ -13,17 +13,26 @@ class CSRF
         return $token;
     }
 
-    public static function validate(string $token): bool
+    public static function getToken(): string
     {
-        $stored = $_SESSION[self::TOKEN_KEY] ?? '';
-        unset($_SESSION[self::TOKEN_KEY]);
-        return hash_equals($stored, $token);
+        if (empty($_SESSION[self::TOKEN_KEY])) {
+            return self::generate();
+        }
+        return (string) $_SESSION[self::TOKEN_KEY];
+    }
+
+    public static function validate(?string $token): bool
+    {
+        if (empty($token) || empty($_SESSION[self::TOKEN_KEY])) {
+            return false;
+        }
+        return hash_equals((string) $_SESSION[self::TOKEN_KEY], $token);
     }
 
     /** Returns a ready-to-embed hidden input field. */
     public static function field(): string
     {
-        $token = self::generate();
+        $token = self::getToken();
         return '<input type="hidden" name="csrf_token" value="' . htmlspecialchars($token) . '">';
     }
 }

@@ -175,9 +175,9 @@ function submitDelete(form) {
         .then(res => res.json())
         .then(json => {
             if (json.success) {
-                const row = form.closest('tr');
-                row.remove();
-                checkEmptyTable();
+                window.location.reload();
+            } else {
+                alert(json.message || 'Failed to delete task.');
             }
         })
         .catch(() => form.submit()); // fallback: full page submit

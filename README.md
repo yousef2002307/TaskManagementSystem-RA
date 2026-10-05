@@ -81,7 +81,7 @@ php -S localhost:8000 -t d:/laragon/www/rawatask
 - **Task CRUD** — Create, edit, delete tasks with confirmation
 - **Dashboard** — Stats bar (Total / Pending / Completed) + full task table
 - **Search & Filter** — Live client-side filtering by title, status, and priority (no page reload)
-- **fetch() delete** — Task deletion removes the row from the DOM instantly without page refresh
+- **fetch() delete** — Task deletion with confirmation modal via fetch() and automatic reload to refresh dashboard stats
 - **Dual validation** — JS validates before submit; PHP re-validates on every POST independently
 - **Ownership guard** — Every DB query includes `AND user_id = ?`; users cannot access each other's tasks
 
@@ -95,10 +95,11 @@ vendor/bin/phpunit --testdox
 
 Tests use a separate `ticketsystemdb_test` database that is created and wiped automatically on each run.
 
-### Test Coverage (30 tests, 50 assertions)
+### Test Coverage (36 tests, 61 assertions)
 
 | Suite | File | What it tests |
 |-------|------|---------------|
+| Unit | `tests/Unit/CSRFTest.php` | Token generation, consistency across multiple forms in session, valid & invalid checks |
 | Unit | `tests/Unit/TaskValidatorTest.php` | Title required/max-length, valid priority & status values, date format, multiple errors |
 | Integration | `tests/Integration/UserModelTest.php` | create, findByEmail, findById, password hashing, no password leak on findById |
 | Integration | `tests/Integration/TaskModelTest.php` | CRUD, ownership guards on find/update/delete, stats counts + user isolation, filters |
@@ -142,6 +143,7 @@ rawatask/
 └── tests/
     ├── bootstrap.php
     ├── Unit/
+    │   ├── CSRFTest.php
     │   └── TaskValidatorTest.php
     └── Integration/
         ├── UserModelTest.php
