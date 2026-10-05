@@ -5,11 +5,19 @@
             "AlRehab\\Rawatask\\": "src/"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    },
     "authors": [
         {
             "name": "yousef2002307",
             "email": "85695400+yousef2002307@users.noreply.github.com"
         }
     ],
-    "require": {}
+    "require": {},
+    "require-dev": {
+        "phpunit/phpunit": "^11"
+    }
 }

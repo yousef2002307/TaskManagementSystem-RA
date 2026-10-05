@@ -7,6 +7,7 @@ require_once __DIR__ . '/src/Core/Auth.php';
 require_once __DIR__ . '/src/Core/CSRF.php';
 require_once __DIR__ . '/src/Models/User.php';
 require_once __DIR__ . '/src/Models/Task.php';
+require_once __DIR__ . '/src/Validators/TaskValidator.php';
 require_once __DIR__ . '/src/Controllers/AuthController.php';
 require_once __DIR__ . '/src/Controllers/TaskController.php';
 

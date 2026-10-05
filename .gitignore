@@ -1,0 +1,27 @@
+# Composer dependencies
+/vendor/
+
+# PHPUnit cache & coverage
+.phpunit.result.cache
+.phpunit.cache/
+coverage/
+
+# Environment files
+.env
+.env.local
+.env.*.local
+*.env
+
+# Operating System & Laragon/Local files
+.DS_Store
+Thumbs.db
+*.tmp
+*.log
+
+# IDE & Editor configurations
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+*.swp
+*~

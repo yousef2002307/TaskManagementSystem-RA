@@ -1,77 +1,107 @@
 # TaskManager
 
-A simple, clean task management system built with vanilla PHP 8, MySQL, and no external frameworks.
+A clean, secure task management system built with vanilla PHP 8, MySQL, and no external frameworks.
 
 ---
 
 ## Requirements
 
-- PHP 8.0+
+- PHP 8.1+
 - MySQL 5.7+ / MariaDB 10.3+
+- Composer
 - A local server (Laragon, XAMPP, WAMP, or PHP's built-in server)
 
 ---
 
 ## Setup Instructions
 
-### 1. Clone / place the project
+### 1. Place the project
 
 ```
 d:/laragon/www/rawatask/
 ```
 
-### 2. Create the database
+### 2. Install dependencies
 
-Open your MySQL client (phpMyAdmin, TablePlus, or CLI) and run:
+```bash
+composer install
+```
+
+### 3. Create the database
 
 ```bash
 mysql -u root -p < database/schema.sql
 ```
 
-Or paste the contents of `database/schema.sql` directly into phpMyAdmin's SQL tab.
+Or paste `database/schema.sql` into phpMyAdmin's SQL tab.
 
-This will:
-- Create the `ticketsystemdb` database
-- Create the `users` and `tasks` tables
-- Insert two test users and sample tasks
+This creates `ticketsystemdb`, the `users` and `tasks` tables, and two seed users.
 
-### 3. Configure the database connection
+### 4. Configure the database connection
 
-Edit `config/database.php` and update the constants if needed:
+Edit `config/database.php` if your MySQL credentials differ:
 
 ```php
-define('DB_HOST', 'localhost');
-define('DB_NAME', 'ticketsystemdb');
-define('DB_USER', 'root');
-define('DB_PASS', '');   // your MySQL password
+defined('DB_HOST') || define('DB_HOST', 'localhost');
+defined('DB_NAME') || define('DB_NAME', 'ticketsystemdb');
+defined('DB_USER') || define('DB_USER', 'root');
+defined('DB_PASS') || define('DB_PASS', '');  // your password
 ```
 
-### 4. Access the app
+### 5. Run the app
 
-With Laragon running, visit:
+With Laragon:
 
 ```
 http://localhost/rawatask/
 ```
 
-Or use PHP's built-in server:
+Or PHP's built-in server:
 
 ```bash
 php -S localhost:8000 -t d:/laragon/www/rawatask
 ```
 
-Then visit `http://localhost:8000/`
-
 ---
 
 ## Test Credentials
 
-| User       | Email                  | Password      |
-|------------|------------------------|---------------|
-| Admin One  | admin1@example.com     | password123   |
-| Admin Two  | admin2@example.com     | password123   |
+| User      | Email              | Password    |
+|-----------|--------------------|-------------|
+| Admin One | admin1@example.com | password123 |
+| Admin Two | admin2@example.com | password123 |
 
 > Each user can only see, edit, and delete their own tasks.
+
+---
+
+## Features
+
+- **Authentication** — Login, logout, session handling with CSRF protection
+- **Task CRUD** — Create, edit, delete tasks with confirmation
+- **Dashboard** — Stats bar (Total / Pending / Completed) + full task table
+- **Search & Filter** — Live client-side filtering by title, status, and priority (no page reload)
+- **fetch() delete** — Task deletion removes the row from the DOM instantly without page refresh
+- **Dual validation** — JS validates before submit; PHP re-validates on every POST independently
+- **Ownership guard** — Every DB query includes `AND user_id = ?`; users cannot access each other's tasks
+
+---
+
+## Running the Tests
+
+```bash
+vendor/bin/phpunit --testdox
+```
+
+Tests use a separate `ticketsystemdb_test` database that is created and wiped automatically on each run.
+
+### Test Coverage (30 tests, 50 assertions)
+
+| Suite | File | What it tests |
+|-------|------|---------------|
+| Unit | `tests/Unit/TaskValidatorTest.php` | Title required/max-length, valid priority & status values, date format, multiple errors |
+| Integration | `tests/Integration/UserModelTest.php` | create, findByEmail, findById, password hashing, no password leak on findById |
+| Integration | `tests/Integration/TaskModelTest.php` | CRUD, ownership guards on find/update/delete, stats counts + user isolation, filters |
 
 ---
 
@@ -79,41 +109,54 @@ Then visit `http://localhost:8000/`
 
 ```
 rawatask/
-├── index.php                    ← Front controller / router
+├── index.php                        ← Front controller / router
+├── composer.json
+├── phpunit.xml
 ├── config/
-│   └── database.php             ← PDO connection
+│   └── database.php                 ← PDO singleton
 ├── src/
 │   ├── Core/
-│   │   ├── Auth.php             ← Session management
-│   │   └── CSRF.php             ← CSRF token generation & validation
+│   │   ├── Auth.php                 ← Session lifecycle
+│   │   └── CSRF.php                 ← Token generate & validate
 │   ├── Models/
-│   │   ├── User.php             ← User DB queries
-│   │   └── Task.php             ← Task CRUD + ownership guard
+│   │   ├── User.php                 ← User DB queries
+│   │   └── Task.php                 ← Task CRUD + ownership guard
+│   ├── Validators/
+│   │   └── TaskValidator.php        ← Reusable backend validation rules
 │   └── Controllers/
-│       ├── AuthController.php   ← Login / logout flow
-│       └── TaskController.php   ← Task CRUD flow
+│       ├── AuthController.php       ← Login / logout
+│       └── TaskController.php       ← Task CRUD flow
 ├── views/
-│   ├── layout.php               ← Shared HTML wrapper
+│   ├── layout.php                   ← Shared HTML wrapper
 │   ├── auth/login.php
 │   └── tasks/
-│       ├── dashboard.php
-│       └── form.php             ← Shared create/edit form
+│       ├── dashboard.php            ← Stats + task table
+│       └── form.php                 ← Shared create/edit form
 ├── public/
-│   ├── css/style.css
-│   └── js/app.js
-└── database/
-    └── schema.sql
+│   ├── css/style.css                ← Design system (CSS variables, responsive)
+│   └── js/app.js                    ← Form validation, live filter, fetch() delete
+├── database/
+│   └── schema.sql                   ← DDL + seed data
+└── tests/
+    ├── bootstrap.php
+    ├── Unit/
+    │   └── TaskValidatorTest.php
+    └── Integration/
+        ├── UserModelTest.php
+        └── TaskModelTest.php
 ```
 
 ---
 
-## Security Features
+## Security
 
-- PDO prepared statements (no raw SQL concatenation)
-- Passwords hashed with `password_hash(PASSWORD_DEFAULT)`
-- CSRF token on every POST form
-- `session_regenerate_id(true)` on login
-- `httponly` session cookie flag
-- Ownership guard: every task query includes `AND user_id = ?`
-- All output escaped with `htmlspecialchars()`
-- Server-side validation on all inputs
+| Practice | Implementation |
+|---|---|
+| SQL injection | PDO prepared statements throughout |
+| Password storage | `password_hash(PASSWORD_DEFAULT)` / `password_verify()` |
+| CSRF | Token on every POST form, validated before any action |
+| XSS | `htmlspecialchars()` on all output |
+| Session fixation | `session_regenerate_id(true)` on login |
+| Session cookies | `httponly`, `samesite=Lax` |
+| Authorization | Every task query includes `AND user_id = ?` |
+| Backend validation | Validated in `TaskValidator` before any DB write |

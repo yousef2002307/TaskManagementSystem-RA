@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-define('DB_HOST', 'localhost');
-define('DB_NAME', 'ticketsystemdb');
-define('DB_USER', 'root');
-define('DB_PASS', '');
-define('DB_CHARSET', 'utf8mb4');
+defined('DB_HOST')    || define('DB_HOST',    'localhost');
+defined('DB_NAME')    || define('DB_NAME',    'ticketsystemdb');
+defined('DB_USER')    || define('DB_USER',    'root');
+defined('DB_PASS')    || define('DB_PASS',    '');
+defined('DB_CHARSET') || define('DB_CHARSET', 'utf8mb4');
 
 function get_db(): PDO
 {

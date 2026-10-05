@@ -5,11 +5,13 @@ declare(strict_types=1);
 class TaskController
 {
     private int $userId;
+    private TaskValidator $validator;
 
     public function __construct()
     {
         Auth::requireLogin();
-        $this->userId = (int) Auth::user()['id'];
+        $this->userId    = (int) Auth::user()['id'];
+        $this->validator = new TaskValidator();
     }
 
     public function dashboard(): void
@@ -40,8 +42,8 @@ class TaskController
             exit;
         }
 
-        $data = $this->extractTaskData();
-        $errors = $this->validateTaskData($data);
+        $data   = $this->extractTaskData();
+        $errors = $this->validator->validate($data);
 
         if ($errors) {
             $_SESSION['flash_error'] = implode(' ', $errors);
@@ -78,7 +80,7 @@ class TaskController
         $this->findOwnedTaskOrAbort($id); // confirm ownership before update
 
         $data   = $this->extractTaskData();
-        $errors = $this->validateTaskData($data);
+        $errors = $this->validator->validate($data);
 
         if ($errors) {
             $_SESSION['flash_error'] = implode(' ', $errors);
@@ -146,30 +148,5 @@ class TaskController
             'status'      => $_POST['status']            ?? 'pending',
             'due_date'    => $_POST['due_date']          ?? '',
         ];
-    }
-
-    private function validateTaskData(array $data): array
-    {
-        $errors = [];
-
-        if ($data['title'] === '') {
-            $errors[] = 'Title is required.';
-        } elseif (mb_strlen($data['title']) > 200) {
-            $errors[] = 'Title must not exceed 200 characters.';
-        }
-
-        if (!in_array($data['priority'], ['low', 'medium', 'high'], true)) {
-            $errors[] = 'Invalid priority value.';
-        }
-
-        if (!in_array($data['status'], ['pending', 'in_progress', 'completed'], true)) {
-            $errors[] = 'Invalid status value.';
-        }
-
-        if ($data['due_date'] !== '' && !strtotime($data['due_date'])) {
-            $errors[] = 'Invalid due date format.';
-        }
-
-        return $errors;
     }
 }
