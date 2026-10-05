@@ -29,13 +29,25 @@ composer install
 
 ### 3. Create the database
 
+**Option 1 (Recommended): Import `ticketsystemdb.sql` from the root folder**
+
+- **Via phpMyAdmin**:
+  1. Open phpMyAdmin and create a database named `ticketsystemdb`.
+  2. Select `ticketsystemdb`, go to the **Import** tab, choose `ticketsystemdb.sql` from the root directory, and click **Import**.
+- **Via MySQL CLI**:
+  ```bash
+  mysql -u root -e "CREATE DATABASE IF NOT EXISTS ticketsystemdb CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
+  mysql -u root -p ticketsystemdb < ticketsystemdb.sql
+  ```
+
+**Option 2: Run `database/schema.sql`**
+
 ```bash
 mysql -u root -p < database/schema.sql
 ```
+Or paste the contents of `database/schema.sql` directly into phpMyAdmin's SQL tab.
 
-Or paste `database/schema.sql` into phpMyAdmin's SQL tab.
-
-This creates `ticketsystemdb`, the `users` and `tasks` tables, and two seed users.
+Both options create the `ticketsystemdb` database, `users` and `tasks` tables, and pre-populate the two test users and sample tasks.
 
 ### 4. Configure the database connection
 
@@ -115,6 +127,7 @@ rawatask/
 ├── composer.lock
 ├── index.php                        ← Front controller / router
 ├── phpunit.xml
+├── ticketsystemdb.sql               ← Database export (root)
 ├── config/
 │   └── database.php                 ← PDO singleton
 ├── src/
