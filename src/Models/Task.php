@@ -82,10 +82,9 @@ class Task
     {
         $stmt = get_db()->prepare(
             'SELECT
-                COUNT(*)                                        AS total,
-                SUM(status = "pending")                         AS pending,
-                SUM(status = "in_progress")                     AS in_progress,
-                SUM(status = "completed")                       AS completed
+                COUNT(*)               AS total,
+                SUM(status = "pending")    AS pending,
+                SUM(status = "completed")  AS completed
              FROM tasks WHERE user_id = ?'
         );
         $stmt->execute([$userId]);
