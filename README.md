@@ -66,9 +66,9 @@ php -S localhost:8000 -t d:/laragon/www/rawatask
 
 ## Test Credentials
 
-| User      | Email              | Password    |
-|-----------|--------------------|-------------|
-| Admin One | admin1@example.com | password123 |
+| Name / Role | Email | Password |
+|---|---|---|
+| john (Admin One) | admin1@example.com | password123 |
 | Admin Two | admin2@example.com | password123 |
 
 > Each user can only see, edit, and delete their own tasks.
@@ -109,8 +109,10 @@ Tests use a separate `ticketsystemdb_test` database that is created and wiped au
 
 ```
 rawatask/
-├── index.php                        ← Front controller / router
+├── .gitignore
 ├── composer.json
+├── composer.lock
+├── index.php                        ← Front controller / router
 ├── phpunit.xml
 ├── config/
 │   └── database.php                 ← PDO singleton
